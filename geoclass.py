@@ -110,4 +110,25 @@ for pt in geo.points(): #iterates through all points
 geo.deletePoints(grp.points()) #deletes the point inside the group that is contained inside the bounding box
 
 
+"""Nearest Points"""
 
+node = hou.pwd()
+geo = node.geometry()
+
+box = node.inputs()[1].geometry() #gets the second input of the sop node
+
+
+cd = (1,1,0) #color 1
+cd2 = (0,0,1) #color 2
+geo.addAttrib(hou.attribType.Point,"Cd",cd) #add an attribute
+grp = geo.createPointGroup("mypointGroup") #add a point GRP
+
+
+
+for pt in box.points(): #iterates through all points
+    pos = pt.position() #stores the position of the point
+    nearpts = geo.nearestPoints(pos,3,None,0.1) #store the nearest ponts
+    
+    for nearpt in nearpts: #iterate the nearest points
+        nearpt.setAttribValue("Cd",cd2) #changes its colour as well
+    
