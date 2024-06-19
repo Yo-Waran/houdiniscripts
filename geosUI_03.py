@@ -20,12 +20,12 @@ class GeoNames(QMainWindow):
         central_widget = QWidget() # create a base class for all UI Objects
         main_layout = QVBoxLayout() # layout child widgets vertically
         h_layout = QHBoxLayout() # layout child widgets horizontally
-        v_layout = QVBoxLayout()
-        h_layout2 = QHBoxLayout()
+        v_layout = QVBoxLayout() #vertical layout for second column
+        h_layout2 = QHBoxLayout() #horizontal layout for labels on top
 
         # Create some widgets
         self.label = QLabel("The List of Geometries and selected Node's children are: \n")
-        self.button = QPushButton("Okay")
+        self.button = QPushButton("Okay") 
         self.list_widget1 = QListWidget()
         self.list_widget2 = QListWidget()
         self.label2 = QLabel("Selected Node:")
@@ -38,19 +38,26 @@ class GeoNames(QMainWindow):
         #default item for list2
         self.list_widget2.addItems(["Nothing is selected"])
         
-        #connect selection 
+        #connect item selection of list1 with function 
         self.list_widget1.itemClicked.connect(self.listOfSelect) #mouseclick
         self.list_widget1.itemActivated.connect(self.listOfSelect) #keyboard enter
         
         #Connect the button's click signal to a method
         self.button.clicked.connect(self.close_window)
 
-        # Add widgets to the horizontal layout
+        # Add widgets to the main horizontal layout
         h_layout.addWidget(self.list_widget1)
+        #add layout to second colum
         h_layout.addLayout(v_layout)
+        
+        #add layout for top labels
         v_layout.addLayout(h_layout2)
+        
+        #add widgets to inner label layout
         h_layout2.addWidget(self.label2)
         h_layout2.addWidget(self.label3)
+        
+        #add widget to second column
         v_layout.addWidget(self.list_widget2)
 
         # Add widgets to the main vertical layout
