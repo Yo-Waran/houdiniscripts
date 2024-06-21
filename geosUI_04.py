@@ -25,9 +25,10 @@ class GeoNames(QMainWindow):
 
     def __init__(self):
         super(GeoNames, self).__init__() # retain parent class parameters
-        self.setWindowTitle("Geometries") # set window title
+        self.setWindowTitle("Geometries Renamer") # set window title
         self.childNodes = None #default child
-        self.setStyleSheet("background-color: rgba(50,60,70,100)") #add color to it
+        self.present_path = ""
+        self.setStyleSheet("background-color: rgba(50,50,50,100)") #add color to it
 
         # Create a central widget and set a layout
         central_widget = QWidget() # create a base class for all UI Objects
@@ -38,8 +39,8 @@ class GeoNames(QMainWindow):
         h_layout3 = QHBoxLayout()#horizontal layout for text field and button
 
         # Create some widgets
-        self.label = QLabel("The List of Geometries and selected Node's children are: \n")
-        self.button = QPushButton("Okay") 
+        self.label = QLabel("Current Context: " + self.present_path)
+        self.button = QPushButton("Save Changes and Exit") 
         self.list_widget1 = QListWidget()
         self.list_widget2 = QListWidget()
         self.label2 = QLabel("Selected Node:")
@@ -49,21 +50,36 @@ class GeoNames(QMainWindow):
 
         #WIDGET FUNCTIONS
         
-        #textfield
-        self.textField.setPlaceholderText("Rename Child Nodes")
+        #Syle the label
+        self.label.setStyleSheet("""
+            color: Black;
+            font-size: 15px;
+            background-color: darkgrey;
+            border: 10px solid grey;
+            padding: 10px;
+        """)
 
+
+        #textfield
+        self.textField.setPlaceholderText("Rename Child Nodes (Suffix added Automatically)")
 
         #renamebutton
-        self.renameButton.setText("Set")
+        self.renametext1 = "Set All" #rename variable
+        self. renametext2 = "Set Selected" #rename variable 2
         self.renameButton.clicked.connect(self.renamer)
 
         # Add items to the list widgets
         items1 = self.listOfGeos()
+        #self.list_widget1.addItem("Present Directory:" + self.present_path)
         self.list_widget1.addItems(items1)
 
         #default item for list2
         self.list_widget2.addItems(["Nothing is selected"])
         self.list_widget2.setSelectionMode(QListWidget.MultiSelection) #enable Multi selection
+        self.on_selection() #run it on start
+        self.list_widget2.itemSelectionChanged.connect(self.on_selection) #change button name based on selection
+
+        
         
         #connect item selection of list1 with function 
         self.list_widget1.itemClicked.connect(self.listOfSelect) #mouseclick
@@ -114,7 +130,11 @@ class GeoNames(QMainWindow):
         """
         This function returns a list of all the Geometries in the /obj context in the Houdini Scene.
         """
-        self.context = hou.node("/obj")
+        editor = hou.ui.paneTabOfType(hou.paneTabType.NetworkEditor) #store the Network editor
+        self.present_path = editor.pwd().path() #store the path of the current directory open in the Editor
+        self.context = hou.node(self.present_path) # get the node of that path
+        self.label.setText("Current Context: " + self.present_path)
+
         allNodes = self.context.children() # store the child nodes
         geos = [] # empty list for storing geometry
         for node in allNodes:
@@ -124,6 +144,8 @@ class GeoNames(QMainWindow):
         geoNames = []
         for geo in geos:
             geoNames.append(geo.name())
+        if not geoNames:
+            geoNames.append("No Geo Nodes in the current Context ")            
         return geoNames
     
     def listOfSelect(self,item):
@@ -131,17 +153,21 @@ class GeoNames(QMainWindow):
         This function returns a list of all the nodes inside the selected nodes.
         """
         sel =self.context.node(item.text()) #get the text from item and store the respective node
-        self.childNodes = sel.children() #store child nodes
-        self.selectedNode.setText(item.text())#change the label
-        if not self.childNodes:
+        try:
+            self.childNodes = sel.children() #store child nodes
+            self.selectedNode.setText(item.text())#change the label
+            if not self.childNodes:
+                    self.list_widget2.clear() 
+                    self.list_widget2.addItems(["Node is Empty"])
+            else:        
+                nodeNames = []
+                for node in self.childNodes:
+                    nodeNames.append(node.name())
                 self.list_widget2.clear() 
-                self.list_widget2.addItems(["Node is Empty"])
-        else:        
-            nodeNames = []
-            for node in self.childNodes:
-                nodeNames.append(node.name())
-            self.list_widget2.clear() 
-            self.list_widget2.addItems(nodeNames)
+                self.list_widget2.addItems(nodeNames)
+        except AttributeError:
+            self.list_widget2.clear()
+            self.list_widget2.addItems(["Empty Context"])
     
     def renamer(self):
         """
@@ -174,6 +200,14 @@ class GeoNames(QMainWindow):
         else:
             print("Skipping renamer")
             return None           
+    
+    def on_selection(self):
+        if len(self.list_widget2.selectedItems())<1:
+            self.renameButton.setText(self.renametext1)
+        else:
+            self.renameButton.setText(self.renametext2)            
             
 window = GeoNames() # object creation
 window.show() # show the window
+
+
