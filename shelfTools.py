@@ -90,7 +90,7 @@ exec(openfile)
 import os
 import glob
 
-# Replace with the directory where your VSCode files are located
+# Replace with the directory where your VSCode Houdini files are located
 vscode_workspace_dir = '/jobs/tvcResources/bangComms/waranr/Scripts/Git_Repository/houdiniscripts'
 
 # Get a list of all files in the workspace directory
