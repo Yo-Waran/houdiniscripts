@@ -1,3 +1,4 @@
+from unittest import loader
 import hou
 import sys
 import os
@@ -15,3 +16,30 @@ class testApp(QtWidgets.QWidget):
 
 win = testApp()
 win.show()
+
+
+##########################################################################
+
+#To load UI in a python pane tab you use the following code
+
+########################################################################
+# Replace the sample code below with your own to create a
+# PyQt5 or PySide2 interface.  Your code must define an
+# onCreateInterface() function that returns the root widget of
+# your interface.
+########################################################################
+
+import hou
+import sys
+import os
+
+from PySide2 import QtCore,QtUiTools, QtWidgets
+
+def onCreateInterface():
+    global widget
+    ui_file_path = "<pathOfUI>"
+    loader = QtUiTools.QUiLoader()
+    ui_file = QtCore.QFile(ui_file_path)
+    ui_file.open(QtCore.QFile.ReadOnly)
+    widget = loader.load(ui_file)
+    return widget
