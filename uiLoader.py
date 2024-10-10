@@ -1,6 +1,4 @@
 import hou
-import sys
-import os
 
 from PySide2 import QtCore,QtUiTools, QtWidgets
 
@@ -29,8 +27,6 @@ win.show()
 ########################################################################
 
 import hou
-import sys
-import os
 
 from PySide2 import QtCore,QtUiTools, QtWidgets
 
