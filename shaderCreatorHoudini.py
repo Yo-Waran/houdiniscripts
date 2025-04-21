@@ -58,7 +58,7 @@ class ShaderCreatorHoudiniWindow(QtWidgets.QDialog):
         """
 
         super(ShaderCreatorHoudiniWindow, self).__init__(parent)
-        uiPath ="/jobs/tvcResources/bangComms/waranr/Scripts/Git_Repository/QtUI/masterUIShaderCreator.ui"
+        uiPath ="QtUi/masterUIShaderCreator.ui"
         self.mainWindow = QtUiTools.QUiLoader().load(uiPath,parentWidget = self)
 
         self.layout = QtWidgets.QVBoxLayout()
@@ -404,7 +404,7 @@ class ShaderCreator(QtWidgets.QWidget):  # Change to QWidget instead of QMainWin
             None
         """
         super(ShaderCreator, self).__init__(parent=parent)
-        ui_path = "/jobs/tvcResources/bangComms/waranr/Scripts/Git_Repository/QtUI/masterUIShaderCreator.ui"  # Replace with the path to your .ui file
+        ui_path = "QtUi/masterUIShaderCreator.ui"  # Replace with the path to your .ui file
         self.myUI = QtUiTools.QUiLoader().load(ui_path, parentWidget=self)
 
         self.myUI.standardSurfaceWidget.setVisible(True)
